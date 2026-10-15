@@ -1,0 +1,90 @@
+.meetings-dashboard { min-width: 0; color: #203653; }
+.dashboard-page-heading { grid-column: 1 / -1; margin: 2px 0 4px; }
+.dashboard-page-heading > span { color: #7690b1; font-size: 9px; font-weight: 800; letter-spacing: 1.5px; }
+#root .dashboard > main .dashboard-page-heading h1 { margin: 5px 0 4px; color: #1a3151; font-size: clamp(22px, 2.5vw, 30px); letter-spacing: -.8px; }
+.dashboard-page-heading p { margin: 0; color: #74839a; font-size: 12px; }
+.dashboard-full-panel { grid-column: 1 / -1; width: 100%; }
+.upcoming-meetings { display: grid; gap: 12px; max-width: 900px; }
+.scheduled-meeting-card { display: grid; grid-template-columns: 62px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 17px; border: 1px solid #e1e9f3; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px #244b7909; }
+.scheduled-date { display: grid; justify-items: center; gap: 1px; padding: 8px 4px; border-radius: 12px; background: #f0f5fc; color: #57769c; }
+.scheduled-date strong { font-size: 10px; text-transform: uppercase; }
+.scheduled-date b { color: #285e9e; font-size: 23px; line-height: 1.2; }
+.scheduled-date span { font-size: 9px; }
+.scheduled-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
+.scheduled-details h2 { margin: 0; color: #203b5e; font-size: 14px; }
+.scheduled-details p { margin: 5px 0; color: #607795; font-size: 11px; }
+.scheduled-details small { color: #91a0b3; font-size: 9px; }
+.meeting-type-pill { padding: 4px 7px; border-radius: 20px; background: #edf5ff; color: #3774b9; font-size: 9px; font-weight: 700; }
+#root .dashboard > main .scheduled-start-button { width: auto; min-height: 36px; padding: 8px 12px; border: 1px solid #d5e2f2; border-radius: 9px; background: #f5f9ff; color: #326cac; font-size: 10px; font-weight: 750; box-shadow: none; }
+#root .dashboard > main .scheduled-start-button:not(:disabled):hover { background: #eaf3ff; box-shadow: none; }
+#root .dashboard > main .scheduled-start-button:disabled { color: #929eae; background: #f5f6f8; cursor: not-allowed; box-shadow: none; }
+.meetings-empty { display: grid; justify-items: center; align-content: center; min-height: 220px; padding: 24px; border: 1px dashed #d8e2ef; border-radius: 16px; background: #fbfcfe; text-align: center; }
+.meetings-empty > span { display: grid; width: 38px; height: 38px; margin-bottom: 10px; place-items: center; border-radius: 12px; background: #eef4fc; color: #5480b5; font-size: 17px; }
+.meetings-empty strong { color: #304967; font-size: 12px; }
+.meetings-empty p { max-width: 280px; margin: 6px 0 0; color: #8290a4; font-size: 10px; line-height: 1.5; }
+.meetings-empty.compact { min-height: 130px; border: 0; background: transparent; }
+.meetings-error { grid-column: 1 / -1; margin: 0 0 12px; padding: 10px 12px; border: 1px solid #f0d4d4; border-radius: 10px; background: #fff7f7; color: #a14343; font-size: 11px; }
+.attendance-layout { display: grid; grid-template-columns: minmax(210px, 280px) minmax(0, 1fr); gap: 16px; min-height: 420px; }
+.attendance-meeting-list, .attendance-report { min-width: 0; border: 1px solid #e1e9f3; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px #244b7909; }
+.attendance-meeting-list { align-self: start; overflow: hidden; }
+.attendance-list-heading { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #edf0f5; color: #324a68; font-size: 11px; }
+.attendance-list-heading span { display: grid; min-width: 23px; height: 23px; place-items: center; border-radius: 12px; background: #eff4fb; color: #55769b; font-size: 10px; }
+.attendance-meeting-item { display: grid; width: 100%; gap: 5px; padding: 13px 15px; border: 0; border-bottom: 1px solid #f0f2f6; background: transparent; text-align: left; cursor: pointer; }
+.attendance-meeting-item:last-child { border-bottom: 0; }
+.attendance-meeting-item:hover, .attendance-meeting-item.is-selected { background: #f4f8fe; }
+.attendance-meeting-item strong { overflow: hidden; color: #304966; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.attendance-meeting-item span, .attendance-meeting-item small { color: #8290a4; font-size: 9px; }
+.attendance-meeting-item small { color: #6480a1; }
+.attendance-report { padding: clamp(14px, 2vw, 22px); }
+.attendance-report-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.attendance-report-heading h2 { margin: 5px 0; color: #203958; font-size: 18px; letter-spacing: -.4px; }
+.attendance-report-heading p { margin: 0; color: #7e8da3; font-size: 10px; }
+#root .dashboard > main .attendance-export-button { display: inline-flex; align-items: center; gap: 7px; width: auto; min-height: 34px; flex: 0 0 auto; padding: 7px 10px; border: 1px solid #d6e2f1; border-radius: 8px; background: #fff; color: #3c6eaa; font-size: 9px; font-weight: 750; box-shadow: none; }
+#root .dashboard > main .attendance-export-button:hover { background: #f4f8fd; box-shadow: none; }
+.attendance-export-button svg { width: 14px; height: 14px; }
+.attendance-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin: 18px 0; }
+.attendance-summary > div { display: grid; gap: 5px; padding: 12px; border: 1px solid #e8edf4; border-radius: 11px; background: #f9fbfd; }
+.attendance-summary span { color: #8190a4; font-size: 9px; }
+.attendance-summary strong { color: #2c507b; font-size: 18px; font-weight: 750; }
+.attendance-table-wrap { width: 100%; overflow-x: auto; border: 1px solid #e7ecf3; border-radius: 11px; }
+.attendance-table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+.attendance-table th { padding: 10px; background: #f6f8fb; color: #73849b; font-size: 9px; font-weight: 750; }
+.attendance-table td { padding: 11px 10px; border-top: 1px solid #edf0f4; color: #52657d; font-size: 9px; }
+.attendance-table td strong, .attendance-table td small { display: block; }
+.attendance-table td strong { color: #304762; font-size: 10px; }
+.attendance-table td small { margin-top: 3px; color: #93a0b0; font-size: 8px; }
+.attendance-table-empty { padding: 25px !important; color: #8794a6 !important; text-align: center; }
+.attendance-status { display: inline-flex; padding: 4px 7px; border-radius: 20px; background: #ebf7ef; color: #3b8054; font-size: 8px; font-weight: 750; }
+.attendance-status.is-left { background: #f1f3f6; color: #758195; }
+.attendance-note { margin: 9px 0 0; color: #8b98a9; font-size: 9px; line-height: 1.5; }
+@media (max-width: 780px) { .attendance-layout { grid-template-columns: minmax(0, 1fr); } .attendance-meeting-list { max-height: 240px; overflow-y: auto; } }
+@media (max-width: 560px) { .scheduled-meeting-card { grid-template-columns: 48px minmax(0, 1fr); gap: 11px; padding: 12px; } .scheduled-date b { font-size: 19px; } #root .dashboard > main .scheduled-start-button { grid-column: 2; justify-self: start; } .attendance-report-heading { flex-direction: column; } .attendance-summary { gap: 6px; } .attendance-summary > div { padding: 9px; } .attendance-summary span { font-size: 8px; } .attendance-summary strong { font-size: 15px; } }
+
+/* Readable type and roomier tables across the meeting history screens. */
+.meetings-dashboard { font-size: 14px; }
+.scheduled-meeting-card { min-height: 108px; padding: 22px; }
+.scheduled-details h2 { font-size: 18px; }
+.scheduled-details p { font-size: 14px; }
+.scheduled-details small, .meeting-type-pill { font-size: 11px; }
+#root .dashboard > main .scheduled-start-button { min-height: 44px; padding: 10px 16px; font-size: 13px; }
+.meetings-empty strong { font-size: 15px; }
+.meetings-empty p { font-size: 13px; }
+.attendance-layout { grid-template-columns: minmax(250px, 330px) minmax(0, 1fr); gap: 22px; }
+.attendance-list-heading { padding: 18px; font-size: 14px; }
+.attendance-meeting-item { gap: 7px; padding: 16px 18px; }
+.attendance-meeting-item strong { font-size: 14px; }
+.attendance-meeting-item span, .attendance-meeting-item small { font-size: 12px; }
+.attendance-report-heading h2 { font-size: 26px; }
+.attendance-report-heading p { font-size: 13px; }
+#root .dashboard > main .attendance-export-button { min-height: 42px; padding: 9px 13px; font-size: 12px; }
+.attendance-summary > div { padding: 16px; }
+.attendance-summary span { font-size: 12px; }
+.attendance-summary strong { font-size: 24px; }
+.attendance-table th { padding: 13px; font-size: 12px; }
+.attendance-table td { padding: 14px 13px; font-size: 12px; }
+.attendance-table td strong { font-size: 13px; }
+.attendance-table td small { font-size: 11px; }
+.attendance-status { font-size: 11px; }
+.attendance-note { font-size: 12px; }
+@media (max-width: 780px) { .attendance-layout { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .attendance-summary span { font-size: 10px; } .attendance-summary strong { font-size: 18px; } .attendance-report-heading h2 { font-size: 22px; } }

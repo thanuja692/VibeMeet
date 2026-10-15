@@ -1,0 +1,129 @@
+.host-setup {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(22px, 2.5vw, 32px);
+  border: 1px solid #e2eaf5;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #fff 68%, #f7faff);
+  color: #19365d;
+  box-shadow: 0 12px 36px #234b7b0c;
+}
+
+.host-setup-heading { display: flex; align-items: center; gap: 16px; margin: 0 0 28px; text-align: left; }
+.host-heading-icon { display: grid; width: 52px; height: 52px; flex: 0 0 52px; place-items: center; border: 1px solid #dce9fb; border-radius: 16px; background: #edf5ff; color: #3676c8; }
+.host-heading-icon svg { width: 26px; height: 26px; }
+.host-setup-eyebrow { color: #5278ad; font-size: 10px; font-weight: 800; letter-spacing: 1.35px; }
+#root .dashboard > main .host-setup-heading h1 { margin: 3px 0 5px; color: #172f52; font-size: clamp(22px, 2.2vw, 29px); font-weight: 720; letter-spacing: -0.8px; line-height: 1.2; }
+.host-setup-heading p, .host-source-card p { margin: 0; color: #71809a; font-size: 12px; line-height: 1.55; }
+
+.host-mode-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; border: 0; text-align: left; }
+.host-mode-options legend { grid-column: 1 / -1; margin-bottom: 10px; color: #344d70; font-size: 12px; font-weight: 750; }
+.host-mode-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; min-width: 0; min-height: 139px; box-sizing: border-box; padding: 15px; border: 1px solid #e2eaf4; border-radius: 14px; background: #fff; cursor: pointer; transition: border-color .16s, background .16s, box-shadow .16s, transform .16s; }
+.host-mode-card:hover { border-color: #b9cde8; transform: translateY(-1px); }
+.host-mode-card.is-selected { border-color: #6594d2; background: linear-gradient(145deg, #f6f9ff, #eef5ff); box-shadow: 0 0 0 2px #6594d21c; }
+.host-mode-card input { position: absolute; top: 14px; right: 14px; width: 16px; height: 16px; margin: 0; accent-color: #3475c6; }
+.host-mode-card input:focus-visible { outline: 3px solid #a8c6f1; outline-offset: 3px; }
+.host-mode-icon { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border-radius: 11px; background: #eef4fc; color: #5279ad; }
+.host-mode-icon svg { width: 20px; height: 20px; }
+.host-mode-card.is-selected .host-mode-icon { background: #e1edff; color: #2869b9; }
+.host-mode-copy { display: block; }
+.host-mode-copy strong, .host-mode-copy small { display: block; }
+.host-mode-copy strong { color: #253e60; font-size: 12px; font-weight: 750; }
+.host-mode-copy small { margin-top: 4px; color: #7887a0; font-size: 11px; line-height: 1.45; }
+
+.host-source-card { display: grid; gap: 12px; margin-top: 18px; padding: 16px; border: 1px solid #e3eaf4; border-radius: 15px; background: #fbfcff; text-align: left; animation: host-source-enter .18s ease-out both; }
+.host-source-card h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; color: #294363; font-size: 13px; font-weight: 750; }
+.host-source-card h2 span { padding: 3px 7px; border-radius: 20px; background: #eef2f7; color: #748198; font-size: 9px; font-weight: 650; }
+.host-source-card p { font-size: 11px; }
+#root .dashboard > main .host-upload-button { display: inline-flex; align-items: center; justify-self: start; gap: 8px; width: auto; min-height: 38px; padding: 8px 12px; border: 1px solid #cfdef1; border-radius: 9px; background: #fff; color: #326fb9; font-size: 11px; font-weight: 700; box-shadow: none; }
+#root .dashboard > main .host-upload-button:hover { border-color: #9ebde5; background: #f4f8ff; box-shadow: none; }
+.host-upload-button svg { width: 17px; height: 17px; }
+.host-source-hint { color: #8491a6; font-size: 10px; line-height: 1.5; }
+.host-source-selected, .host-source-reading { display: flex; align-items: center; gap: 9px; min-width: 0; padding: 9px 10px; border: 1px solid #cde5d7; border-radius: 10px; background: #f4fbf6; color: #32734d; font-size: 11px; text-align: left; }
+.host-source-reading { border-color: #d9e5f4; background: #f7faff; color: #526a89; }
+.host-source-file-icon { display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center; border-radius: 8px; background: #e2f3e8; }
+.host-source-file-icon svg { width: 16px; height: 16px; }
+.host-source-selected > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#root .dashboard > main .host-source-selected button { flex: 0 0 auto; width: auto; min-height: auto; margin-left: auto; padding: 4px 7px; border: 0; background: transparent; color: #687d70; font-size: 10px; box-shadow: none; }
+#root .dashboard > main .host-source-selected button:hover { background: #e8f5ec; color: #355d43; box-shadow: none; }
+.host-reading-spinner { width: 15px; height: 15px; border: 2px solid #d5e2f2; border-top-color: #3877c7; border-radius: 50%; animation: host-spin .7s linear infinite; }
+.host-source-error { color: #a33b42 !important; font-size: 11px !important; }
+#root .dashboard > main .host-title-field { display: grid; gap: 7px; margin: 0 0 22px; color: #344d70; font-size: 11px; font-weight: 750; text-align: left; }
+.host-title-field > span small { margin-left: 5px; color: #8995a8; font-size: 9px; font-weight: 600; }
+#root .dashboard > main .host-title-field input, #root .dashboard > main .host-schedule-form input { box-sizing: border-box; width: 100%; min-height: 39px; margin: 0; padding: 9px 11px; border: 1px solid #dfe7f1; border-radius: 9px; background: #fff; color: #253e60; font: inherit; font-size: 11px; }
+#root .dashboard > main .host-title-field input:focus-visible, #root .dashboard > main .host-schedule-form input:focus-visible { border-color: #6194d4; outline: 3px solid #6194d426; }
+.host-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 9px; margin-top: 18px; }
+#root .dashboard > main .host-actions .host-start-button { width: auto; margin: 0; }
+#root .dashboard > main .host-schedule-toggle, #root .dashboard > main .host-confirm-schedule { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: auto; min-height: 40px; margin: 0; padding: 9px 12px; border: 1px solid #d5e1f0; border-radius: 10px; background: #fff; color: #41648e; font-size: 11px; font-weight: 700; box-shadow: none; }
+#root .dashboard > main .host-schedule-toggle:hover { border-color: #b2c9e7; background: #f5f8fd; box-shadow: none; }
+.host-schedule-toggle svg { width: 16px; height: 16px; }
+.host-schedule-form { display: grid; gap: 8px; margin-top: 14px; padding: 14px; border: 1px solid #dfe8f4; border-radius: 12px; background: #f8faff; text-align: left; }
+#root .dashboard > main .host-schedule-form h2 { margin: 0 0 2px; color: #294363; font-size: 12px; font-weight: 750; }
+.host-schedule-form label { color: #526984; font-size: 10px; font-weight: 700; }
+.host-schedule-form > small { color: #8995a8; font-size: 9px; }
+#root .dashboard > main .host-confirm-schedule { justify-self: start; margin-top: 4px; border-color: #c9dcf5; background: #eaf3ff; color: #2c66a9; }
+#root .dashboard > main .host-confirm-schedule:hover { background: #dceaff; box-shadow: none; }
+.host-schedule-success { display: grid; gap: 7px; margin-top: 18px; padding: 14px; border: 1px solid #cde5d7; border-radius: 12px; background: #f3fbf6; text-align: left; }
+.host-schedule-success strong { color: #286342; font-size: 12px; }
+.host-schedule-success span { color: #5e7567; font-size: 10px; line-height: 1.5; }
+#root .dashboard > main .host-schedule-success button { justify-self: start; min-height: 32px; padding: 6px 10px; border: 1px solid #c7ddce; border-radius: 8px; background: #fff; color: #326848; font-size: 10px; box-shadow: none; }
+#root .dashboard > main .host-schedule-success button:hover { background: #edf8f0; box-shadow: none; }
+#root .dashboard > main .host-start-button { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 18px; padding: 12px 16px; border: 0; border-radius: 10px; background: linear-gradient(115deg, #2868b8, #4385d4); color: #fff; font-size: 12px; font-weight: 750; box-shadow: 0 7px 16px #3477ca24; }
+#root .dashboard > main .host-start-button:hover { background: linear-gradient(115deg, #205ba5, #3678c6); box-shadow: 0 9px 20px #3477ca32; }
+#root .dashboard > main .host-start-button:disabled { cursor: wait; opacity: .7; }
+.host-start-button svg { width: 17px; height: 17px; }
+#root .dashboard > main .host-start-button:focus-visible, #root .dashboard > main .host-upload-button:focus-visible, #root .dashboard > main .host-source-selected button:focus-visible { outline: 3px solid #97b9ea; outline-offset: 3px; }
+
+@keyframes host-spin { to { transform: rotate(360deg); } }
+@keyframes host-source-enter { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 900px) {
+  .host-setup { max-width: 620px; justify-self: center; }
+  .dashboard > main > div:has(> button) { justify-self: center; width: 100%; }
+}
+
+@media (max-width: 520px) {
+  .host-setup { padding: 20px 16px; border-radius: 16px; }
+  .host-setup-heading { align-items: flex-start; gap: 12px; margin-bottom: 22px; }
+  .host-heading-icon { width: 42px; height: 42px; flex-basis: 42px; border-radius: 13px; }
+  .host-heading-icon svg { width: 22px; height: 22px; }
+  .host-setup-heading p { max-width: 280px; font-size: 11px; }
+  .host-mode-options { grid-template-columns: minmax(0, 1fr); }
+  .host-mode-card { min-height: auto; flex-direction: row; align-items: center; padding: 12px; }
+  .host-mode-copy { padding-right: 22px; }
+  .host-source-card { padding: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .host-mode-card, .host-source-card { animation: none; transition: none; }
+  .host-reading-spinner { animation-duration: 1.5s; }
+}
+
+/* Comfortable production scale for the lesson and meeting setup controls. */
+.host-setup { padding: clamp(28px, 3vw, 42px); border-radius: 22px; }
+.host-setup-heading { gap: 18px; margin-bottom: 30px; }
+.host-heading-icon { width: 58px; height: 58px; flex-basis: 58px; }
+#root .dashboard > main .host-setup-heading h1 { font-size: clamp(28px, 2.2vw, 36px); letter-spacing: -1.1px; }
+.host-setup-heading p, .host-source-card p { font-size: 14px; }
+#root .dashboard > main .host-title-field { gap: 9px; margin-bottom: 24px; font-size: 14px; }
+#root .dashboard > main .host-title-field input, #root .dashboard > main .host-schedule-form input { min-height: 48px; padding: 11px 13px; font-size: 14px; }
+.host-mode-options legend { font-size: 14px; }
+.host-mode-card { min-height: 160px; gap: 14px; padding: 18px; }
+.host-mode-copy strong { font-size: 15px; }
+.host-mode-copy small { font-size: 13px; }
+.host-mode-icon { width: 42px; height: 42px; flex-basis: 42px; }
+.host-source-card { gap: 14px; margin-top: 22px; padding: 19px; }
+.host-source-card h2 { font-size: 16px; }
+.host-source-hint { font-size: 12px; }
+#root .dashboard > main .host-upload-button { min-height: 44px; padding: 10px 14px; font-size: 13px; }
+.host-actions { gap: 12px; margin-top: 22px; }
+#root .dashboard > main .host-start-button { min-height: 48px; font-size: 14px; }
+#root .dashboard > main .host-schedule-toggle, #root .dashboard > main .host-confirm-schedule { min-height: 48px; padding-inline: 16px; font-size: 13px; }
+@media (max-width: 520px) {
+  .host-setup { padding: 22px 18px; }
+  .host-setup-heading { gap: 12px; }
+  .host-heading-icon { width: 46px; height: 46px; flex-basis: 46px; }
+  .host-mode-card { min-height: auto; }
+}

@@ -1,0 +1,38 @@
+.dashboard {
+  display: flex;
+  align-items: stretch;
+  min-height: 70vh;
+}
+
+.sidebar {
+  box-sizing: border-box;
+  flex: 0 0 264px;
+  padding: 36px 24px;
+  border-right: 1px solid var(--border);
+  text-align: left;
+}
+
+.sidebar-kicker { display: block; margin: 0 0 18px 12px; color: #8492a7; font-size: 11px; font-weight: 800; letter-spacing: 1.25px; }
+.sidebar-nav { display: grid; gap: 5px; }
+#root .dashboard > .sidebar .sidebar-nav button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid transparent; border-radius: 11px; background: transparent; color: #5d6f89; font: inherit; font-size: 14px; font-weight: 620; text-align: left; cursor: pointer; }
+#root .dashboard > .sidebar .sidebar-nav button > span { display: grid; width: 26px; height: 26px; flex: 0 0 26px; place-items: center; border-radius: 8px; background: #eff3f8; color: #6c7c93; font-size: 17px; }
+#root .dashboard > .sidebar .sidebar-nav button:hover { background: #f5f8fc; color: #334c6c; }
+#root .dashboard > .sidebar .sidebar-nav button.is-active { border-color: #e2ebf8; background: #edf4ff; color: #1765c2; }
+#root .dashboard > .sidebar .sidebar-nav button.is-active > span { background: #dceaff; color: #286fc4; }
+#root .dashboard > .sidebar .sidebar-nav button:focus-visible { outline: 3px solid #91baff; outline-offset: 2px; }
+
+.dashboard > main {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    flex-basis: auto;
+    padding: 14px 16px;
+  }
+
+  .sidebar-kicker { margin-bottom: 8px; }
+  .sidebar-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #root .dashboard > .sidebar .sidebar-nav button { justify-content: center; gap: 6px; padding: 8px 4px; font-size: 12px; }
+}

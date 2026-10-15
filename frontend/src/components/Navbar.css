@@ -1,0 +1,73 @@
+.app-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 32px;
+  border-bottom: 1px solid #e1e7f0;
+  background: #fff;
+  box-shadow: 0 4px 16px #243b6408;
+  color-scheme: light;
+}
+
+.navbar-brand { color: #203958; font-size: 24px; font-weight: 780; letter-spacing: -1.1px; text-decoration: none; }
+.navbar-brand span { color: #397ad0; }
+.navbar-actions { display: flex; align-items: center; gap: 12px; }
+
+.navbar-home,
+.navbar-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.navbar-home {
+  color: #3156bd;
+  background: #edf2ff;
+}
+
+.navbar-logout {
+  color: #fff;
+  background: #315bd6;
+  border-color: #315bd6;
+}
+
+@media (hover: hover) {
+  .navbar-home:hover { background: #dfe8ff; }
+  .navbar-logout:hover {
+    background: #2549b5;
+    box-shadow: 0 4px 12px #315bd625;
+  }
+}
+
+.navbar-home:focus-visible,
+.navbar-logout:focus-visible {
+  outline: 3px solid #809df0;
+  outline-offset: 3px;
+}
+
+.navbar-home:active { background: #d3dfff; }
+.navbar-logout:active { background: #1e3d99; }
+
+@media (max-width: 480px) {
+  .app-navbar { padding: 12px 16px; }
+  .navbar-brand { font-size: 21px; }
+  .navbar-actions { gap: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-home,
+  .navbar-logout { transition: none; }
+}

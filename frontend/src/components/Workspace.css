@@ -1,0 +1,116 @@
+/* Full screen VibeMeet dashboard, scoped so legacy starter styles cannot squeeze it. */
+#root:has(> .app-navbar) { width: 100%; max-width: none; min-height: 100vh; margin: 0; border: 0; background: #f3f6fb; color-scheme: light; text-align: left; }
+#root:has(> .meeting) > .app-navbar { display: none; }
+#root:has(> .app-navbar) > .app-navbar { z-index: 5; display: flex; justify-content: flex-end; align-items: center; min-height: 64px; padding: 10px 28px; border-bottom: 1px solid #e5eaf2; background: #fff; box-shadow: 0 2px 12px #24476f08; }
+#root:has(> .app-navbar) .navbar-actions { display: flex; align-items: center; }
+#root:has(> .app-navbar) .navbar-logout { min-height: 40px; padding: 8px 16px; border: 1px solid #d8e2ef; border-radius: 9px; background: #fff; color: #425a78; font-size: 13px; font-weight: 650; }
+#root:has(> .app-navbar) .navbar-logout:hover { border-color: #b9cbe0; background: #f7f9fc; }
+
+#root .vibemeet-workspace {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  align-items: stretch;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  margin: 0;
+  background: #f5f8fc;
+}
+#root .vibemeet-workspace > .sidebar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  min-height: calc(100vh - 64px);
+  padding: 30px 18px;
+  border: 0;
+  border-right: 1px solid #e4eaf2;
+  background: #fff;
+}
+.workspace-brand { display: flex; align-items: center; gap: 12px; margin: 0 10px 44px; color: #1c3352; font-size: 23px; font-weight: 780; letter-spacing: -.9px; text-decoration: none; }
+.workspace-brand-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 13px; background: linear-gradient(145deg, #3987ee, #1463d0); color: #fff; box-shadow: 0 7px 18px #2474dc30; }
+.workspace-brand-icon svg { width: 24px; height: 24px; }
+#root .vibemeet-workspace .sidebar-kicker { margin: 0 12px 12px; color: #91a0b4; font-size: 10px; letter-spacing: 1.35px; }
+#root .vibemeet-workspace .sidebar-nav { display: grid; gap: 7px; }
+#root .vibemeet-workspace .sidebar-nav button { min-height: 46px; padding: 9px 11px; border-radius: 10px; font-size: 13px; }
+#root .vibemeet-workspace .sidebar-nav button > span { width: 25px; height: 25px; flex-basis: 25px; font-size: 16px; }
+
+#root .vibemeet-workspace > .dashboard-main {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  align-content: start;
+  align-items: start;
+  gap: 22px 26px;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(28px, 3.2vw, 52px);
+}
+#root .vibemeet-workspace .dashboard-page-heading { grid-column: 1 / -1; margin: 0; padding: clamp(22px, 2.5vw, 36px); border: 1px solid #e2ebf7; border-radius: 18px; background: linear-gradient(115deg, #edf5ff 0%, #f8fbff 74%); }
+#root .vibemeet-workspace .dashboard-page-heading > span { color: #6683a8; font-size: 10px; font-weight: 800; letter-spacing: 1.65px; }
+#root .vibemeet-workspace .dashboard-page-heading h1 { margin: 9px 0 8px; color: #183150; font-size: clamp(28px, 2.4vw, 38px); font-weight: 750; line-height: 1.15; letter-spacing: -1.15px; }
+#root .vibemeet-workspace .dashboard-page-heading p { color: #687c98; font-size: 14px; line-height: 1.55; }
+
+.workspace-shortcuts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; min-width: 0; }
+#root .vibemeet-workspace .workspace-shortcut { display: grid; grid-template-columns: 42px minmax(0, 1fr) 14px; align-items: center; gap: 4px 12px; min-width: 0; min-height: 98px; padding: 15px; border: 1px solid #e0e8f3; border-radius: 14px; background: #fff; color: #263e5e; font: inherit; text-align: left; cursor: pointer; transition: border-color .16s, background .16s, transform .16s, box-shadow .16s; }
+#root .vibemeet-workspace .workspace-shortcut:hover { border-color: #abc7eb; background: #fbfdff; color: #263e5e; transform: translateY(-1px); box-shadow: 0 8px 22px #284f7a0d; }
+#root .vibemeet-workspace .workspace-shortcut.is-current { border-color: #8ab5ef; background: linear-gradient(140deg, #f1f7ff, #fff); color: #263e5e; }
+#root .vibemeet-workspace .workspace-shortcut:focus-visible { outline: 3px solid #94bdf0; outline-offset: 2px; }
+.workspace-shortcut-icon { display: grid; grid-row: span 2; width: 40px; height: 40px; place-items: center; border-radius: 12px; background: #eaf3ff; color: #2674d5; font-size: 20px; }
+#root .vibemeet-workspace .workspace-shortcut strong { align-self: end; color: #243d5c; font-size: 14px; font-weight: 720; }
+#root .vibemeet-workspace .workspace-shortcut small { align-self: start; color: #7c8da5; font-size: 11px; line-height: 1.4; }
+#root .vibemeet-workspace .workspace-shortcut::after { content: "›"; grid-column: 3; grid-row: 1 / span 2; color: #397ed0; font-size: 22px; }
+
+.workspace-quick-actions { grid-column: 1; display: grid; gap: 8px; min-width: 0; }
+.workspace-quick-actions > h2 { margin: 0; color: #203957; font-size: 19px; font-weight: 730; letter-spacing: -.35px; }
+.workspace-quick-actions > p { margin: 0 0 5px; color: #7789a1; font-size: 12px; line-height: 1.5; }
+#root .vibemeet-workspace .workspace-quick-actions > .host-setup { align-self: start; width: 100%; min-width: 0; padding: clamp(22px, 2vw, 32px); border-radius: 16px; }
+#root .vibemeet-workspace .host-setup-heading { margin-bottom: 22px; }
+#root .vibemeet-workspace .host-setup-heading h1 { font-size: clamp(24px, 2vw, 32px); }
+#root .vibemeet-workspace .host-mode-card { min-height: 132px; padding: 13px; }
+#root .vibemeet-workspace .host-mode-options { gap: 9px; }
+#root .vibemeet-workspace .host-title-field { margin-bottom: 18px; }
+#root .vibemeet-workspace .host-actions { margin-top: 15px; }
+
+.workspace-join-rail { grid-column: 2; grid-row: 3; align-self: stretch; min-width: 0; padding: 18px; border: 1px solid #e1e9f4; border-radius: 16px; background: #fff; box-shadow: 0 8px 26px #203c5e08; }
+#root .vibemeet-workspace .join-card { display: flex; flex-direction: column; gap: 14px; width: 100%; min-width: 0; min-height: 230px; padding: 10px 4px; border: 0; background: transparent; box-shadow: none; text-align: left; }
+#root .vibemeet-workspace .join-card::before { content: none; }
+#root .vibemeet-workspace .join-card h1 { margin: 0; color: #213b5a; font-size: 21px; font-weight: 730; letter-spacing: -.45px; }
+#root .vibemeet-workspace .join-card input { box-sizing: border-box; width: 100%; min-width: 0; min-height: 48px; margin: 0; padding: 11px 13px; border: 1px solid #d8e3f1; border-radius: 10px; background: #fbfcfe; color: #334b69; font: inherit; font-size: 12px; }
+#root .vibemeet-workspace .join-card input:focus-visible { outline: 3px solid #95bdf0; outline-offset: 2px; border-color: #5f97d8; background: #fff; }
+#root .vibemeet-workspace .join-card button { width: 100%; min-height: 46px; margin-top: 0; border: 0; border-radius: 10px; background: linear-gradient(110deg, #1674ee, #2666dc); color: #fff; font-size: 13px; font-weight: 700; }
+#root .vibemeet-workspace .join-card button:hover { background: #155dca; }
+
+#root .vibemeet-workspace > .dashboard-main > .meetings-dashboard { grid-column: 1 / -1; width: 100%; }
+
+@media (max-width: 1120px) {
+  #root .vibemeet-workspace { grid-template-columns: 218px minmax(0, 1fr); }
+  #root .vibemeet-workspace > .sidebar { padding-inline: 15px; }
+  #root .vibemeet-workspace > .dashboard-main { grid-template-columns: minmax(0, 1fr); padding: 28px; }
+  #root .vibemeet-workspace .dashboard-page-heading,
+  #root .vibemeet-workspace .workspace-shortcuts,
+  #root .vibemeet-workspace .workspace-quick-actions,
+  #root .vibemeet-workspace .workspace-join-rail,
+  #root .vibemeet-workspace > .dashboard-main > .meetings-dashboard { grid-column: 1 / -1; grid-row: auto; }
+  #root .vibemeet-workspace .workspace-join-rail { align-self: start; }
+  #root .vibemeet-workspace .workspace-join-rail .join-card { min-height: auto; }
+}
+@media (max-width: 680px) {
+  #root .vibemeet-workspace { display: flex; flex-direction: column; }
+  #root .vibemeet-workspace > .sidebar { min-height: 0; padding: 15px 16px 12px; border-right: 0; border-bottom: 1px solid #e4eaf2; }
+  .workspace-brand { margin: 0 4px 14px; font-size: 20px; }
+  .workspace-brand-icon { width: 36px; height: 36px; }
+  #root .vibemeet-workspace .sidebar-kicker { display: none; }
+  #root .vibemeet-workspace .sidebar-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  #root .vibemeet-workspace .sidebar-nav button { justify-content: center; gap: 5px; min-height: 42px; padding: 6px 4px; font-size: 11px; }
+  #root .vibemeet-workspace .sidebar-nav button > span { width: 20px; height: 20px; flex-basis: 20px; font-size: 13px; }
+  #root .vibemeet-workspace > .dashboard-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 20px 14px 30px; }
+  #root .vibemeet-workspace .dashboard-page-heading { padding: 20px; }
+  #root .vibemeet-workspace .dashboard-page-heading h1 { font-size: 28px; }
+  #root .vibemeet-workspace .workspace-shortcuts { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .workspace-shortcut { min-height: 74px; }
+  #root .vibemeet-workspace .workspace-quick-actions > .host-setup { padding: 20px 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .workspace-shortcut { transition: none; } }

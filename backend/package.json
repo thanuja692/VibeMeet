@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@auth0/auth0-react": "^2.24.1",
+    "auth0": "^7.0.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "express-oauth2-jwt-bearer": "^1.10.0",
+    "express-status-monitor": "^1.3.4",
+    "fs": "^0.0.1-security",
+    "http-status": "^2.1.0",
+    "mongoose": "^9.7.4",
+    "multer": "^2.4.0",
+    "nodemon": "^3.1.14",
+    "path": "^0.12.7",
+    "socket.io": "^4.8.3",
+    "stream": "^0.0.3"
+  }
+}

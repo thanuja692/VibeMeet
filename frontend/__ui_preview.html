@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VibeMeet UI preview</title>
+</head>
+<body>
+  <div id="root"></div>
+  <pre id="layout-metrics" style="display:none"></pre>
+  <script type="module" src="/src/__ui_preview.jsx"></script>
+  <script>
+    const measure = (selector) => {
+      const element = document.querySelector(selector)
+      if (!element) return null
+      const rect = element.getBoundingClientRect()
+      const style = getComputedStyle(element)
+      return { x: Math.round(rect.x), width: Math.round(rect.width), height: Math.round(rect.height), columns: style.gridTemplateColumns }
+    }
+    const report = setInterval(() => {
+      if (!document.querySelector(".vibemeet-workspace")) return
+      document.getElementById("layout-metrics").textContent = JSON.stringify({ viewport: innerWidth, root: measure("#root"), workspace: measure(".vibemeet-workspace"), sidebar: measure(".sidebar"), main: measure(".dashboard-main"), shortcuts: measure(".workspace-shortcuts"), tile: measure(".workspace-shortcut"), host: measure(".workspace-quick-actions"), join: measure(".workspace-join-rail"), bodyWidth: document.body.scrollWidth })
+      clearInterval(report)
+    }, 50)
+  </script>
+</body>
+</html>
