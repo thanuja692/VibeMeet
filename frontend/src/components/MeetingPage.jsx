@@ -295,10 +295,10 @@ function MeetingPage() {
 
   try {
     // A stopped track cannot restart, so request a new one.
-    const cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false
-    })
+   const stream = await navigator.mediaDevices.getUserMedia({
+  video: true,
+  audio: true
+})
 
     newTrack = cameraStream.getVideoTracks()[0]
 

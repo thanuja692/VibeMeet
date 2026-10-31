@@ -25,7 +25,7 @@ export default function useSaveUser() {
         const token = await getAccessTokenSilently()
         if (!active) return
 
-        const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5050').replace(/\/$/, '')
+        const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '')
         const response = await fetch(`${apiUrl}/users/profile`, {
           method: 'POST',
           headers: {
