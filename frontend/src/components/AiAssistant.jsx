@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react"
-import "../../public/AiAssistant.css"
+import "./AiAssistant.css"
 import api from "../api"
 import { useAuth0 } from "@auth0/auth0-react"
 import ReactMarkdown from "react-markdown"

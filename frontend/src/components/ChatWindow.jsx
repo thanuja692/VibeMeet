@@ -1,5 +1,5 @@
 ﻿import { useEffect, useRef, useState } from "react"
-import "../../public/ChatWindow.css"
+import "./ChatWindow.css"
 
 function ChatWindow({
   socket,

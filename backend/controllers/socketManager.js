@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { closeAttendanceSession } from "./meetingController.js"
+import { closeAttendanceSession, endMeetingAfterHostDisconnect } from "./meetingController.js"
  
 let connections={}
 const messages={}
@@ -7,6 +7,7 @@ const timeOnline={}
 const pinnedMessages={}
 const aiPermissions={}
 const teachingContexts={}
+const participantNames={}
 export const socketConnection=(server)=>{
     const allowedOrigins = [...new Set([
         "http://localhost:5173",
@@ -40,6 +41,8 @@ export const socketConnection=(server)=>{
                 // ]
                 connections[path]=[]
                 connections[path].push(socket.id)
+                socket.data.isHost=true
+                participantNames[socket.id] = String(context?.participantName || "Host").trim().slice(0, 40) || "Host"
                  timeOnline[socket.id]=new Date()
                  aiPermissions[path]=null
                 teachingContexts[path] = {
@@ -51,12 +54,13 @@ export const socketConnection=(server)=>{
                  socket.data.roomId=path
                 socket.emit("room-created", path)
                 socket.emit("teaching-context", teachingContexts[path])
+                socket.emit("participant-name", socket.id, participantNames[socket.id])
                 socket.emit("new-user", socket.id, connections[path])
 
             })
                     socket.on("set-ai-permission",(allowed)=>{
                         const roomId=socket.data.roomId
-                        if(!roomId){
+                        if(!roomId || !socket.data.isHost || typeof allowed !== "boolean"){
                             return
                         }
                         aiPermissions[roomId]=allowed
@@ -75,6 +79,7 @@ export const socketConnection=(server)=>{
             socket.on("end-meeting", () => {
                 const roomId = socket.data.roomId
                 if (!roomId || !socket.data.isHost || !connections[roomId]) return
+                socket.data.endNotified = true
                 for (const participantId of connections[roomId]) {
                     if (participantId !== socket.id) io.to(participantId).emit("meeting-ended")
                 }
@@ -176,7 +181,7 @@ socket.on("unpin-message", (messageId) => {
     )
 })
 
-            socket.on("join-call",(path)=>{
+            socket.on("join-call",(path, requestedName="")=>{
                 // participant does this 
                 if(connections[path]==undefined){
                   socket.emit("room-error","room doesnt found or meeting has ended")
@@ -185,7 +190,8 @@ socket.on("unpin-message", (messageId) => {
 
                 connections[path].push(socket.id)
                 socket.data.roomId=path
-                socket.data.isHost=true
+                socket.data.isHost=false
+                participantNames[socket.id] = String(requestedName).trim().slice(0, 40) || "Participant"
                 // there is a chance that user wont be joined when the 
                 // host have sent a message regarding the permission of the 
                 // ai chat window
@@ -194,6 +200,11 @@ socket.on("unpin-message", (messageId) => {
                  aiPermissions[path] ?? false
                             )
                 socket.emit("teaching-context", teachingContexts[path] || { teachingMode: false, teachingSource: null })
+                for (const participantId of connections[path]) {
+                    const name = participantNames[participantId]
+                    if (name) io.to(socket.id).emit("participant-name", participantId, name)
+                    if (participantId !== socket.id) io.to(participantId).emit("participant-name", socket.id, participantNames[socket.id])
+                }
                 timeOnline[socket.id]=new Date()
 
                 for (const participantId of connections[path]) {
@@ -297,8 +308,23 @@ socket.on("unpin-message", (messageId) => {
 })
 
 
-            socket.on("disconnect",()=>{
-                closeAttendanceSession(socket.id)
+            socket.on("disconnect", async ()=>{
+                await closeAttendanceSession(socket.id)
+                const hostRoomId = socket.data.roomId
+                if (socket.data.isHost && hostRoomId) {
+                    const roomParticipants = connections[hostRoomId] || []
+                    if (!socket.data.endNotified) {
+                        for (const participantId of roomParticipants) {
+                            if (participantId !== socket.id) io.to(participantId).emit("meeting-ended")
+                        }
+                    }
+                    await endMeetingAfterHostDisconnect(hostRoomId)
+                    for (const participantId of roomParticipants) delete participantNames[participantId]
+                    delete connections[hostRoomId]
+                    delete teachingContexts[hostRoomId]
+                    delete aiPermissions[hostRoomId]
+                    return
+                }
                 const duration=new Date()-timeOnline[socket.id]
                 const seconds=duration/1000
                 const minutes=(duration/1000)/60
@@ -318,6 +344,7 @@ socket.on("unpin-message", (messageId) => {
 
                         const index=connections[matchingRoom].indexOf(socket.id)
                         connections[matchingRoom].splice(index,1)
+                        delete participantNames[socket.id]
                         if(connections[matchingRoom].length===0){
                             delete connections[matchingRoom]
                             delete teachingContexts[matchingRoom]

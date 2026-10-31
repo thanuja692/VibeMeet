@@ -96,6 +96,26 @@ export const endMeeting = async (req, res) => {
   }
 }
 
+export const endMeetingAfterHostDisconnect = async (roomId) => {
+  try {
+    const meeting = await Meeting.findOne({ roomId, status: "live" })
+    if (!meeting) return
+    const endedAt = new Date()
+    meeting.status = "ended"
+    meeting.endedAt = endedAt
+    for (const attendee of meeting.attendees) {
+      for (const session of attendee.sessions) {
+        if (session.leftAt) continue
+        session.leftAt = endedAt
+        session.durationSeconds = Math.max(0, Math.floor((endedAt - session.joinedAt) / 1000))
+      }
+    }
+    await meeting.save()
+  } catch (error) {
+    console.error("Meeting end after host disconnect failed:", error.message)
+  }
+}
+
 export const joinAttendance = async (req, res) => {
   const auth0Id = currentUserId(req)
   const { socketId } = req.body || {}
@@ -105,19 +125,19 @@ export const joinAttendance = async (req, res) => {
   try {
     const meeting = await Meeting.findOne({ roomId: req.params.roomId, status: "live", teachingMode: true })
     if (!meeting) return res.status(404).json({ msg: "This teaching session is not available for attendance." })
-    if (meeting.hostAuth0Id === auth0Id) return res.json({ tracked: false })
-
     let attendee = meeting.attendees.find((entry) => entry.auth0Id === auth0Id)
     if (!attendee) {
       const profile = await User.findOne({ auth0Id }).lean()
       attendee = {
         auth0Id,
-        name: cleanText(profile?.name || req.body?.name, 120, "Student"),
+        name: cleanText(req.body?.name || profile?.name, 120, "Student"),
         email: cleanText(profile?.email || req.body?.email, 254),
         sessions: [],
       }
       meeting.attendees.push(attendee)
       attendee = meeting.attendees[meeting.attendees.length - 1]
+    } else if (req.body?.name) {
+      attendee.name = cleanText(req.body.name, 120, attendee.name || "Student")
     }
 
     const existingSession = attendee.sessions.find((session) => session.socketId === socketId)
@@ -142,23 +162,34 @@ export const getAttendance = async (req, res) => {
     if (!meeting) return res.status(404).json({ msg: "Teaching meeting not found." })
 
     const now = new Date()
-    const sessions = []
+    const attendees = []
     for (const attendee of meeting.attendees || []) {
+      const sessions = []
       for (const session of attendee.sessions || []) {
         const leftAt = session.leftAt || (meeting.status === "ended" ? meeting.endedAt : null)
         const elapsed = leftAt
           ? session.durationSeconds || Math.floor((new Date(leftAt) - new Date(session.joinedAt)) / 1000)
           : Math.floor((now - new Date(session.joinedAt)) / 1000)
         sessions.push({
-          studentName: attendee.name,
-          email: attendee.email,
           joinedAt: session.joinedAt,
           leftAt,
           durationSeconds: Math.max(0, elapsed),
         })
       }
+      if (!sessions.length) continue
+      const longestSession = sessions.reduce((longest, session) => session.durationSeconds > longest.durationSeconds ? session : longest)
+      attendees.push({
+          studentName: attendee.name,
+          email: attendee.email,
+          joinedAt: sessions.reduce((earliest, session) => new Date(session.joinedAt) < new Date(earliest) ? session.joinedAt : earliest, sessions[0].joinedAt),
+          leftAt: sessions.some((session) => !session.leftAt) ? null : sessions.reduce((latest, session) => new Date(session.leftAt) > new Date(latest) ? session.leftAt : latest, sessions[0].leftAt),
+          durationSeconds: longestSession.durationSeconds,
+          longestJoinedAt: longestSession.joinedAt,
+          longestLeftAt: longestSession.leftAt,
+          joinCount: sessions.length,
+      })
     }
-    sessions.sort((a, b) => new Date(a.joinedAt) - new Date(b.joinedAt))
+    attendees.sort((a, b) => new Date(a.joinedAt) - new Date(b.joinedAt))
     return res.json({
       meeting: {
         roomId: meeting.roomId,
@@ -168,13 +199,46 @@ export const getAttendance = async (req, res) => {
         startedAt: meeting.startedAt,
         endedAt: meeting.endedAt,
       },
-      studentCount: new Set((meeting.attendees || []).map((attendee) => attendee.auth0Id)).size,
-      sessionCount: sessions.length,
-      sessions,
+      studentCount: attendees.length,
+      sessionCount: attendees.reduce((count, attendee) => count + attendee.joinCount, 0),
+      sessions: attendees,
     })
   } catch (error) {
     console.error("Attendance report failed:", error.message)
     return res.status(500).json({ msg: "Unable to load this attendance report." })
+  }
+}
+
+export const clearMeetingAttendance = async (req, res) => {
+  try {
+    const meeting = await Meeting.findOne({
+      roomId: req.params.roomId,
+      hostAuth0Id: currentUserId(req),
+      teachingMode: true,
+    })
+    if (!meeting) return res.status(404).json({ msg: "Teaching meeting not found." })
+    const deletedParticipants = meeting.attendees.length
+    meeting.attendees = []
+    await meeting.save()
+    return res.json({ deletedParticipants })
+  } catch (error) {
+    console.error("Attendance clear failed:", error.message)
+    return res.status(500).json({ msg: "Unable to clear attendance for this session." })
+  }
+}
+
+export const clearAllAttendance = async (req, res) => {
+  try {
+    const meetings = await Meeting.find({ hostAuth0Id: currentUserId(req), teachingMode: true }).select("attendees").lean()
+    const deletedParticipants = meetings.reduce((total, meeting) => total + (meeting.attendees?.length || 0), 0)
+    const result = await Meeting.updateMany(
+      { hostAuth0Id: currentUserId(req), teachingMode: true },
+      { $set: { attendees: [] } },
+    )
+    return res.json({ deletedParticipants, clearedSessions: result.modifiedCount })
+  } catch (error) {
+    console.error("All attendance clear failed:", error.message)
+    return res.status(500).json({ msg: "Unable to clear attendance reports." })
   }
 }
 

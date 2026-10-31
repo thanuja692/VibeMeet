@@ -46,9 +46,19 @@ function RemoteParticipant({ participant, placeholderImage, onVideoReady }) {
       <video ref={videoRef} onPlaying={() => onVideoReady(participant.id)} autoPlay playsInline />
       {(participant.videoOff || !participant.videoReady) && <img className="meeting-placeholder" src={placeholderImage} alt={participant.videoOff ? "Participant camera is off" : "Waiting for participant camera"} />}
       <MediaStatus muted={participant.muted} videoOff={participant.videoOff} />
-      <span className="meeting-participant-label">Guest {participant.id.slice(0, 5)}</span>
+      <span className="meeting-participant-label">{participant.name || `Guest ${participant.id.slice(0, 5)}`}</span>
     </section>
   )
+}
+
+function getHostDisplayName(user) {
+  const email = user?.email?.trim().toLowerCase()
+  const candidates = [
+    [user?.given_name, user?.family_name].filter(Boolean).join(" "),
+    user?.nickname,
+    user?.name,
+  ]
+  return candidates.map((name) => name?.trim()).find((name) => name && name.toLowerCase() !== email && !name.includes("@")) || "Host"
 }
 
 function MeetingPage() {
@@ -61,6 +71,10 @@ function MeetingPage() {
   const navigate = useNavigate()
 
   const isHost = location.state?.isHost
+  const [participantName, setParticipantName] = useState(location.state?.participantName || "")
+  const [nameDraft, setNameDraft] = useState(location.state?.participantName || "")
+  const [nameError, setNameError] = useState("")
+  const displayName = isHost ? getHostDisplayName(user) : participantName
   const [teachingMode, setTeachingMode] = useState(location.state?.teachingMode === true)
   const [teachingSource, setTeachingSource] = useState(location.state?.teachingSource || null)
   const teachingContextRef = useRef({ teachingMode, teachingSource })
@@ -89,6 +103,20 @@ function MeetingPage() {
     setIsAllowedToUseAi(allowed)
     socketRef.current?.emit("set-ai-permission", allowed)
     aiPermissionDialog.current?.close()
+  }
+  const toggleParticipantAiAccess = () => {
+    if (typeof isAllowedToUseAi !== "boolean") return
+    answerAiPermission(!isAllowedToUseAi)
+  }
+  const joinWithName = (event) => {
+    event.preventDefault()
+    const trimmedName = nameDraft.trim()
+    if (!trimmedName) {
+      setNameError("Enter your name to join the call.")
+      return
+    }
+    setNameError("")
+    setParticipantName(trimmedName.slice(0, 40))
   }
     const [aiMessages,setAiMessages]=useState([
               {
@@ -346,6 +374,7 @@ function MeetingPage() {
     }
 
   useEffect(() => {
+    if (!isHost && !participantName.trim()) return undefined
 
     let localStream = null
     let cancelled = false
@@ -474,6 +503,9 @@ function MeetingPage() {
 
     socket.on("video-state", (participantId, videoOff) => {
       if (participantId !== socket.id) updateRemoteParticipant(participantId, { videoOff })
+    })
+    socket.on("participant-name", (participantId, name) => {
+      if (participantId !== socket.id) updateRemoteParticipant(participantId, { name })
     })
     socket.on("mute-state", (participantId, muted) => {
       if (participantId !== socket.id) updateRemoteParticipant(participantId, { muted })
@@ -700,7 +732,7 @@ function MeetingPage() {
           socket.emit(
             "create-room",
             roomId,
-            teachingContextRef.current
+            { ...teachingContextRef.current, participantName: displayName }
           )
 
         }
@@ -715,7 +747,8 @@ function MeetingPage() {
 
           socket.emit(
             "join-call",
-            roomId
+            roomId,
+            participantName
           )
 
         }
@@ -732,14 +765,28 @@ function MeetingPage() {
           : current)
         if (!isHost && attendanceSocketRef.current !== socket.id) {
           attendanceSocketRef.current = socket.id
-          getAccessTokenSilently().then((token) => api.post(
-            `/users/meetings/${encodeURIComponent(roomId)}/attendance/join`,
-            { socketId: socket.id, name: user?.name || user?.nickname || "Student", email: user?.email || "" },
-            { headers: { Authorization: `Bearer ${token}` } },
-          )).catch((error) => {
+          const recordAttendance = async () => {
+            let lastError
+            for (let attempt = 0; attempt < 2; attempt += 1) {
+              try {
+                const token = await getAccessTokenSilently()
+                await api.post(
+                  `/users/meetings/${encodeURIComponent(roomId)}/attendance/join`,
+                  { socketId: socket.id, name: participantName || user?.name || user?.nickname || "Student", email: user?.email || "" },
+                  { headers: { Authorization: `Bearer ${token}` } },
+                )
+                return
+              } catch (error) {
+                lastError = error
+                if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 700))
+              }
+            }
             attendanceSocketRef.current = null
-            console.error("Could not record class attendance:", error.response?.data?.msg || error.message)
-          })
+            const reason = lastError?.response?.data?.msg || lastError?.message
+            console.error("Could not record class attendance:", reason)
+            setMediaError("Your call is connected, but attendance could not be saved. Please tell the host.")
+          }
+          void recordAttendance()
         }
       }
     })
@@ -1166,9 +1213,23 @@ function MeetingPage() {
 
     }
 
-  }, [roomId, isHost, navigate, getAccessTokenSilently, user])
+  }, [roomId, isHost, navigate, getAccessTokenSilently, user, participantName])
 
 
+
+  if (!isHost && !participantName.trim()) {
+    return <main className="meeting-prejoin">
+      <form className="meeting-prejoin-card" onSubmit={joinWithName}>
+        <span className="meeting-prejoin-eyebrow">VIBEMEET CALL</span>
+        <h1>What should we call you?</h1>
+        <p>Enter your name before joining the meeting.</p>
+        <label htmlFor="participant-name">Your name</label>
+        <input id="participant-name" autoComplete="name" autoFocus maxLength={40} value={nameDraft} onChange={(event) => { setNameDraft(event.target.value); setNameError("") }} placeholder="e.g. Alex" />
+        {nameError && <span className="meeting-prejoin-error" role="alert">{nameError}</span>}
+        <button type="submit">Continue to call</button>
+      </form>
+    </main>
+  }
 
   return (
 
@@ -1216,7 +1277,7 @@ function MeetingPage() {
           <video ref={localVideoRef} onPlaying={() => setLocalVideoReady(true)} autoPlay muted playsInline />
           {(!isScreenSharing && isVideoOff || !localVideoReady) && <img className="meeting-placeholder" src={placeholderImage} alt={isVideoOff ? "Your camera is off" : "Waiting for your camera"} />}
           <MediaStatus muted={isMuted} videoOff={isVideoOff && !isScreenSharing} />
-          <span className="meeting-participant-label">You{isScreenSharing ? " · Sharing screen" : ""}</span>
+          <span className="meeting-participant-label">{displayName}{isScreenSharing ? " · Sharing screen" : ""}</span>
         </section>
         {remoteParticipants.map((participant) => (
           <RemoteParticipant key={participant.id} participant={participant} placeholderImage={placeholderImage} onVideoReady={(id) => setRemoteParticipants((current) => current.map((item) => item.id === id ? { ...item, videoReady: true } : item))} />
@@ -1271,6 +1332,17 @@ function MeetingPage() {
   >
   AI Chat
   </button>
+
+  {isHost && <button
+    type="button"
+    className="meeting-ai-access"
+    aria-pressed={isAllowedToUseAi === true}
+    disabled={typeof isAllowedToUseAi !== "boolean"}
+    onClick={toggleParticipantAiAccess}
+    title={isAllowedToUseAi ? "Pause participant access to Millie" : "Resume participant access to Millie"}
+  >
+    {isAllowedToUseAi ? "Pause AI" : "Resume AI"}
+  </button>}
 
   <button
     type="button"

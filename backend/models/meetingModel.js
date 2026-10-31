@@ -24,6 +24,7 @@ const meetingSchema = new mongoose.Schema({
   scheduledAt: { type: Date, default: null },
   startedAt: { type: Date, default: null },
   endedAt: { type: Date, default: null },
+  attendanceVersion: { type: Number, default: 2 },
   attendees: { type: [attendeeSchema], default: [] },
 }, { timestamps: true })
 

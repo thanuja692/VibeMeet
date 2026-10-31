@@ -4,6 +4,36 @@
   color-scheme: light;
 }
 
+.meeting-prejoin {
+  box-sizing: border-box;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at top, #e8f1ff, #f6f9ff 65%);
+  color: #263e5e;
+  text-align: left;
+}
+.meeting-prejoin-card {
+  box-sizing: border-box;
+  display: grid;
+  gap: 12px;
+  width: min(100%, 430px);
+  padding: clamp(24px, 5vw, 38px);
+  border: 1px solid #e1e9f4;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 60px #284f7a12;
+}
+.meeting-prejoin-eyebrow { color: #4d7cb7; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; }
+#root .meeting-prejoin-card h1 { margin: 0; color: #1c3554; font-size: clamp(25px, 5vw, 32px); font-weight: 750; letter-spacing: -.8px; line-height: 1.2; }
+.meeting-prejoin-card p { margin: 0 0 8px; color: #74849b; font-size: 14px; }
+.meeting-prejoin-card label { color: #344d70; font-size: 13px; font-weight: 700; }
+.meeting-prejoin-card input { box-sizing: border-box; width: 100%; min-height: 48px; padding: 11px 13px; border: 1px solid #d8e3f1; border-radius: 10px; background: #fbfcfe; color: #263e5e; font: inherit; font-size: 14px; }
+.meeting-prejoin-card input:focus-visible { border-color: #5f97d8; outline: 3px solid #95bdf044; }
+.meeting-prejoin-error { color: #a33b42; font-size: 12px; }
+#root .meeting-prejoin-card button { min-height: 48px; margin-top: 4px; border: 0; border-radius: 10px; background: linear-gradient(110deg, #1674ee, #2666dc); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; }
+
 #root > .meeting {
   box-sizing: border-box;
   display: grid;
@@ -1277,6 +1307,10 @@
 .meeting-control-slash { top: 22px !important; left: calc(50% - 14px) !important; width: 28px !important; }
 #root > .meeting > .meeting-controls .meeting-millie[aria-expanded="true"] { color: #b8d3ff; }
 #root > .meeting > .meeting-controls .meeting-millie[aria-expanded="true"]::after { background: #3276d1; }
+#root > .meeting > .meeting-controls .meeting-ai-access { --meeting-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3 4 7v5c0 5 3.4 8 8 9 4.6-1 8-4 8-9V7z'/%3E%3Cpath d='M9 12h6'/%3E%3C/svg%3E"); }
+#root > .meeting > .meeting-controls .meeting-ai-access[aria-pressed="true"] { color: #a7efd0; }
+#root > .meeting > .meeting-controls .meeting-ai-access[aria-pressed="true"]::after { background: #218561; }
+#root > .meeting > .meeting-controls .meeting-ai-access:disabled { cursor: wait; opacity: .6; }
 #root > .meeting > .meeting-controls .meeting-screen-share[aria-pressed="true"] { color: #a7efd0; }
 #root > .meeting > .meeting-controls .meeting-screen-share[aria-pressed="true"]::after { background: #218561; }
 

@@ -16,6 +16,7 @@ const io = socketConnection(server)
 import dns from "node:dns";
 
 import { router } from "./routes/userRoute.js"
+import { Meeting } from "./models/meetingModel.js"
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]); 
                                              
@@ -35,6 +36,13 @@ app.use((error, req, res, next) => {
 const start=async()=>{
     const connectDB=await mongoose.connect(process.env.CONNECTION_STRING)
     console.log("connected to DB")
+    const attendanceMigration = await Meeting.updateMany(
+        { attendanceVersion: { $ne: 2 } },
+        { $set: { attendees: [], attendanceVersion: 2 } },
+    )
+    if (attendanceMigration.modifiedCount) {
+        console.log(`Cleared legacy attendance from ${attendanceMigration.modifiedCount} meeting records`)
+    }
     
 server.listen(process.env.PORT,()=>{
     console.log(`listening from PORT ${process.env.PORT}`)

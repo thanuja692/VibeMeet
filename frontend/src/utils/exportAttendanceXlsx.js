@@ -36,13 +36,14 @@ const formatDuration = (seconds = 0) => {
 export default async function exportAttendanceXlsx(report) {
   const { default: JSZip } = await import("jszip")
   const rows = [
-    ["Student", "Email", "Joined", "Left", "Connected duration", "Duration (minutes)"],
+    ["Participant", "Email", "First joined", "Last left", "Longest session", "Joins", "Duration (minutes)"],
     ...report.sessions.map((session) => [
       session.studentName,
       session.email || "",
       formatDate(session.joinedAt),
       formatDate(session.leftAt),
       formatDuration(session.durationSeconds),
+      session.joinCount || 1,
       Math.round((session.durationSeconds || 0) / 60),
     ]),
   ]

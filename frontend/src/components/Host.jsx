@@ -12,7 +12,7 @@ function Host() {
   const { getAccessTokenSilently } = useAuth0()
   const fileInput = useRef(null)
   const [mode, setMode] = useState("meeting")
-  const [source, setSource] = useState(null)
+  const [sources, setSources] = useState([])
   const [error, setError] = useState("")
   const [isReading, setIsReading] = useState(false)
   const [title, setTitle] = useState("")
@@ -26,28 +26,26 @@ function Host() {
   const [scheduledMeeting, setScheduledMeeting] = useState(null)
 
   const chooseSource = async (event) => {
-    const file = event.target.files?.[0]
+    const files = Array.from(event.target.files || [])
     setError("")
-    if (!file) return
-    if (file.size > MAX_SOURCE_SIZE) {
-      setError("Please choose a file smaller than 4 MB.")
+    if (!files.length) return
+    if (files.some((file) => file.size > MAX_SOURCE_SIZE)) {
+      setError("Each file must be smaller than 4 MB.")
       event.target.value = ""
       return
     }
 
     try {
       setIsReading(true)
+      const additions = []
+      for (const file of files) {
       const isImage = ["image/jpeg", "image/png", "image/webp"].includes(file.type)
       if (file.type.startsWith("image/") && !isImage) {
-        setError("Choose a JPG, PNG, or WebP image.")
-        event.target.value = ""
-        return
+        throw new Error("Choose JPG, PNG, or WebP images.")
       }
       const extension = file.name.split(".").pop()?.toLowerCase()
       if (!isImage && !file.type.startsWith("text/") && !["txt", "md", "csv", "json", "html", "xml", "pdf", "pptx", "docx"].includes(extension)) {
-        setError("Choose an image, PDF, PowerPoint (.pptx), Word (.docx), or text file.")
-        event.target.value = ""
-        return
+        throw new Error("Choose images, PDF, PowerPoint (.pptx), Word (.docx), or text files.")
       }
       let content
       if (isImage) {
@@ -86,12 +84,16 @@ function Host() {
       } else {
         content = await file.text()
       }
-      if (!content.trim()) throw new Error("No readable text was found in this file.")
-      setSource({ name: file.name, type: isImage ? "image" : "text", content })
-    } catch {
-      setError("This file could not be read. Check that it is a supported, unprotected file and try again.")
+      if (!isImage && !content.trim()) throw new Error("No readable text was found in this file.")
+      additions.push({ name: file.name, type: isImage ? "image" : "text", content })
+      }
+      const combined = [...sources, ...additions]
+      setSources(combined)
+    } catch (readError) {
+      setError(readError.message || "This file could not be read. Check that it is a supported, unprotected file and try again.")
     } finally {
       setIsReading(false)
+      event.target.value = ""
     }
   }
 
@@ -111,14 +113,18 @@ function Host() {
         title: title.trim() || (mode === "teaching" ? "Class session" : "Meeting"),
         teachingMode: mode === "teaching",
         scheduledAt: startAt ? new Date(startAt).toISOString() : null,
-        teachingSource: mode === "teaching" ? source : null,
+        teachingSource: mode === "teaching" ? (sources.filter((item) => item.type === "text").length
+          ? { type: "text", name: sources.filter((item) => item.type === "text").map((item) => item.name).join(", "), content: sources.filter((item) => item.type === "text").map((item) => "--- " + item.name + " ---\n" + item.content).join("\n\n") }
+          : sources[0] || null) : null,
       }, { headers: { Authorization: `Bearer ${token}` } })
       if (startAt) {
         setScheduledMeeting(response.data.meeting)
         setScheduleOpen(false)
       } else {
         navigate(`/meeting/${roomId}`, {
-          state: { isHost: true, teachingMode: mode === "teaching", teachingSource: source, meetingTitle: response.data.meeting.title },
+          state: { isHost: true, teachingMode: mode === "teaching", teachingSource: mode === "teaching" && sources.filter((item) => item.type === "text").length
+            ? { type: "text", name: sources.filter((item) => item.type === "text").map((item) => item.name).join(", "), content: sources.filter((item) => item.type === "text").map((item) => "--- " + item.name + " ---\n" + item.content).join("\n\n") }
+            : sources[0] || null, meetingTitle: response.data.meeting.title },
         })
       }
     } catch (requestError) {
@@ -167,20 +173,21 @@ function Host() {
             <h2 id="host-source-title">Add lesson material <span>Optional</span></h2>
             <p>Millie will use your examples and lesson notes when answering students.</p>
           </div>
-          <input ref={fileInput} type="file" accept=".jpg,.jpeg,.png,.webp,.pdf,.pptx,.docx,text/*,.txt,.md,.csv,.json,.html,.xml" hidden onChange={chooseSource} />
+          <input ref={fileInput} type="file" multiple accept=".jpg,.jpeg,.png,.webp,.pdf,.pptx,.docx,text/*,.txt,.md,.csv,.json,.html,.xml" hidden onChange={chooseSource} />
           {isReading ? (
             <div className="host-source-reading" role="status"><span className="host-reading-spinner" aria-hidden="true" />Reading your lesson material…</div>
-          ) : source ? (
-            <div className="host-source-selected" role="status">
-              <span className="host-source-file-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></span><span>{source.name}</span>
-              <button type="button" onClick={() => { setSource(null); if (fileInput.current) fileInput.current.value = "" }}>Remove</button>
-            </div>
           ) : (
+            <>
+            {sources.map((source, index) => <div className="host-source-selected" role="status" key={`${source.name}-${index}`}>
+              <span className="host-source-file-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></span><span>{source.name}</span>
+              <button type="button" onClick={() => { setSources((current) => current.filter((_, itemIndex) => itemIndex !== index)); if (fileInput.current) fileInput.current.value = "" }}>Remove</button>
+            </div>)}
             <button className="host-upload-button" type="button" onClick={() => fileInput.current?.click()}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 16v4h16v-4"/></svg> Add lesson material
             </button>
+            </>
           )}
-          <small className="host-source-hint">JPG, PNG, WebP, PDF, PPTX, DOCX, or text files up to 4 MB. You can also start without lesson material.</small>
+          <small className="host-source-hint">Add multiple JPG, PNG, WebP, PDF, PPTX, DOCX, or text files. Each file can be up to 4 MB.</small>
         </section>
       )}
 
